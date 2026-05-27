@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}{{ student.Name }} — StudentIS{% endblock %}
+
+{% block content %}
+<a class="back" href="/">← Back to All Students</a>
+
+<div class="profile-name">{{ student.Name }}</div>
+<div class="profile-sub">
+  <span class="badge badge-blue">{{ student.StudentID }}</span>&nbsp;
+  <span class="badge badge-yellow">{{ student.Course }}</span>&nbsp;
+  Year {{ student.Year }}
+</div>
+
+<!-- PERSONAL INFO + FAMILY -->
+<div class="profile-grid">
+
+  <div class="card">
+    <div class="card-title">Personal Info</div>
+    <div class="info-list">
+      <span class="k">Age</span>         <span class="v">{{ student.Age }}</span>
+      <span class="k">Gender</span>      <span class="v">{% if student.Gender == 'F' %}Female{% else %}Male{% endif %}</span>
+      <span class="k">Birthday</span>    <span class="v">{{ student.Birthdate }}</span>
+      <span class="k">Birthplace</span> <span class="v">{{ student.Birthplace }}</span>
+      <span class="k">Religion</span>   <span class="v">{{ student.Religion }}</span>
+      <span class="k">Address</span>    <span class="v">{{ student.CityAddress }}</span>
+      <span class="k">Email</span>      <span class="v">{{ student.EmailAddress }}</span>
+      <span class="k">Mobile</span>     <span class="v">{{ student.MobileNum }}</span>
+      <span class="k">HS Average</span> <span class="v">
+        {% if student.HS_GenAve %}
+          {% if student.HS_GenAve >= 90 %}
+            <span class="badge badge-green">{{ student.HS_GenAve }}</span>
+          {% elif student.HS_GenAve >= 85 %}
+            <span class="badge badge-blue">{{ student.HS_GenAve }}</span>
+          {% else %}
+            <span class="badge badge-yellow">{{ student.HS_GenAve }}</span>
+          {% endif %}
+        {% else %}—{% endif %}
+      </span>
+      <span class="k">Allowance/wk</span> <span class="v">₱{{ "%.2f"|format(student.WeeklyAllowance) if student.WeeklyAllowance else '—' }}</span>
+      <span class="k">Family Income</span> <span class="v">₱{{ "%.2f"|format(student.TotalMonthlyIncome) if student.TotalMonthlyIncome else '—' }}/mo</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Parents / Guardian</div>
+    {% for p in parents %}
+      {% if p.Parents_Name %}
+      <div style="margin-bottom:1.2rem;">
+        <div style="font-weight:600; margin-bottom:6px;">{{ p.Parents_Name }}
+          <span class="badge badge-blue" style="margin-left:6px;">{{ p.Relationship }}</span>
+        </div>
+        <div class="info-list">
+          <span class="k">Age</span>         <span class="v">{{ p.Parents_Age or '—' }}</span>
+          <span class="k">Education</span>   <span class="v">{{ p.Parents_EducAttainment or '—' }}</span>
+          <span class="k">Occupation</span>  <span class="v">{{ p.Parents_Occupation or '—' }}</span>
+          <span class="k">Status</span>      <span class="v">{{ p.Parents_VitalStatus or '—' }}</span>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- EDUCATIONAL BACKGROUND -->
+<div class="section-title">Educational Background</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>School</th>
+          <th>Address</th>
+          <th>Sector</th>
+          <th>Year Graduated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in edu %}
+        <tr>
+          <td>
+            {% if e.Level == 'E' %}<span class="badge badge-green">Elementary</span>
+            {% elif e.Level == 'HS' %}<span class="badge badge-blue">High School</span>
+            {% elif e.Level == 'SHS' %}<span class="badge badge-yellow">Senior HS</span>
+            {% else %}<span class="badge">{{ e.Level }}</span>{% endif %}
+          </td>
+          <td>{{ e.School_Graduated }}</td>
+          <td>{{ e.School_Address or '—' }}</td>
+          <td>{{ e.Sector or '—' }}</td>
+          <td>{{ e.YearGraduated }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="no-results">No records.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TEST RESULTS -->
+<div class="section-title">Entrance Test Results</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Test</th>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Raw Score</th>
+          <th>Percentile</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tests %}
+        <tr>
+          <td><span class="badge badge-yellow">{{ t.TestName }}</span></td>
+          <td>{{ t.TestDesc }}</td>
+          <td>{{ t.TestDate }}</td>
+          <td>{{ t.RawScore }}</td>
+          <td>
+            {% if t.PercentileRank >= 90 %}<span class="badge badge-green">{{ t.PercentileRank }}th</span>
+            {% elif t.PercentileRank >= 75 %}<span class="badge badge-blue">{{ t.PercentileRank }}th</span>
+            {% else %}<span class="badge badge-yellow">{{ t.PercentileRank }}th</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="no-results">No test records.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CONSULTATIONS -->
+<div class="section-title">Medical / Consultation Records</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Purpose</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in consults %}
+        <tr>
+          <td>{{ c.ConsultDate }}</td>
+          <td>{{ c.ConsultPurpose }}</td>
+          <td>
+            {% set pt = c.PrevConsult | trim %}
+            {% if pt == 'C' %}<span class="badge badge-blue">Counseling</span>
+            {% elif pt == 'PT' %}<span class="badge badge-green">Psychotherapy</span>
+            {% elif pt == 'PC' %}<span class="badge badge-yellow">Psychiatric</span>
+            {% else %}<span class="badge">{{ pt }}</span>{% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="no-results">No consultation records.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — StudentIS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>Statistics and insights from the student database</p>
+</div>
+
+<div class="profile-grid">
+
+  <div class="card">
+    <div class="card-title">Students per Course</div>
+    {% set max_count = per_course[0].total if per_course else 1 %}
+    {% for row in per_course %}
+    <div class="bar-row">
+      <div class="bar-label">{{ row.Course }}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:{{ (row.total / max_count * 100)|int }}%"></div>
+      </div>
+      <div class="bar-val">{{ row.total }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <div class="card-title">Avg HS General Average per Course</div>
+    {% set max_gpa = avg_gpa[0].avg_gpa if avg_gpa else 100 %}
+    {% for row in avg_gpa %}
+    <div class="bar-row">
+      <div class="bar-label">{{ row.Course }}</div>
+      <div class="bar-track">
+        <div class="bar-fill yellow" style="width:{{ (row.avg_gpa / 100 * 100)|int }}%"></div>
+      </div>
+      <div class="bar-val">{{ row.avg_gpa }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<div class="section-title">Top 5 Entrance Exam Performers</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Test</th>
+          <th>Raw Score</th>
+          <th>Percentile</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in top_scorers %}
+        <tr>
+          <td><span class="badge badge-yellow">{{ loop.index }}</span></td>
+          <td>{{ t.Name }}</td>
+          <td>{{ t.TestDesc }}</td>
+          <td>{{ t.RawScore }}</td>
+          <td><span class="badge badge-green">{{ t.PercentileRank }}th</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section-title">Consultation Reasons Breakdown</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Purpose</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in consult_stats %}
+        <tr>
+          <td>{{ c.ConsultPurpose }}</td>
+          <td><span class="badge badge-blue">{{ c.count }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
