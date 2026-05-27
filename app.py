@@ -12,6 +12,7 @@ def get_db():
         password=os.environ.get("avnadmin"),
         database=os.environ.get("defaultdb"),
         port=int(os.environ.get("DB_PORT", 14726))
+        http://127.0.0.1:5000
     )
 
 
