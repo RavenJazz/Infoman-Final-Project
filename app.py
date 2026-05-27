@@ -1,17 +1,16 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request 
 import mysql.connector
 
 app = Flask(__name__)
 
-# Fetch database credentials securely from environment variables
 def get_db():
     return mysql.connector.connect(
-        host=os.environ.get("mysql-3c41cd59-jvvinoya-b92f.c.aivencloud.com"),
-        user=os.environ.get("avnadmin"),
-        password=os.environ.get("avnadmin"),
-        database=os.environ.get("defaultdb"),
-        port=int(os.environ.get("DB_PORT", 14726)),
+        host=os.environ.get("DB_HOST"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASSWORD"),
+        database=os.environ.get("DB_NAME"),
+        port=int(os.environ.get("DB_PORT", 3306)),
         ssl_mode="REQUIRED"
     )
 
